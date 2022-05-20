@@ -1,8 +1,6 @@
-import jenkins
-from datetime import datetime
 import json
 import os,sys
-from fileinput import filename
+
 
 class jobs():
     def __init__(self, jenkins_data_file):
@@ -199,17 +197,15 @@ elif x == '4':
 elif x == '5':
     job_list_dict = json.loads(job_lista).get("jobs")
     odp = input('Do you want to sort it by date? (y/n): ')
-    jobs_sorted = None
+    jobs = job_list_dict
     if odp == "Y" or odp == "y": 
         jobs_sorted = jenkins_data_file.sortJobsByDateDesc(job_list_dict, 0, jobs_amount-1)
+        jobs = jobs_sorted
     else:
         odp = input('Do you want to sort it by build number? (y/n): ')
         if odp == "Y" or odp == "y": 
             jobs_sorted = jenkins_data_file.sortJobsByBuildNrDesc(job_list_dict, 0, jobs_amount-1)
-    if jobs_sorted != None:     
-        jobs = {"jobs":jobs_sorted}
-    else:
-        jobs = job_list_dict
+            jobs = jobs_sorted
     filename = "jenkins_data_output.json"
     jenkins_data_file.saveToJsonFile(jobs, filename)
 elif x == '6':
