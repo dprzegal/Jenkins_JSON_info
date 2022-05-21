@@ -1,6 +1,9 @@
-commands that can be used to test working of this project
+Program shows some info about the file: jenkins_data.json that is being put in the directory named json_file. In the same directory the file jenkins_data_output.json can be found if during the program running user will choose to save the sorted or changed data of the original file: jenkins_data.json.
 
---- with alpine ---
+commands that can be used to test working on this project (used by me)
+
+--- with alpine (Dockerfile_alpine)---
+
 #you can make image of alpine version with command:
 sudo docker build -f Dockerfile_alpine . -t jenkins_json_alpine:v1
 
@@ -15,7 +18,8 @@ python3 jenkinsinfo_from_json.py
 
 
 
----- with ubuntu ----
+---- with ubuntu (Dockerfile)----
+
 #you can make image with ubuntu version with command:
 sudo docker build . -t jenkins_json_info:v1
 
