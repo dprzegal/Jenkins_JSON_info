@@ -1,0 +1,15 @@
+FROM alpine:3.15
+
+RUN apk add --no-cache --virtual build-dependencies python3
+#RUN python3 -m ensurepip && \
+#    pip3 install --upgrade pip setuptools
+
+#define working directory
+WORKDIR /Jenkins_JSON_info
+
+COPY /json_file/jenkins_data.json $Home/Jenkins_JSON_info/json_file/
+COPY jenkinsinfo_from_json.py $Home/Jenkins_JSON_info/
+
+ENTRYPOINT ["python3"]
+
+CMD ["./jenkinsinfo_from_json.py"]

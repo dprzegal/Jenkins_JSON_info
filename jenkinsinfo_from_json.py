@@ -5,14 +5,14 @@ import os,sys
 class jobs():
     def __init__(self, jenkins_data_file):
         self.jenkins_data_file = jenkins_data_file
-    
+
     #niepotrzebna:
     def jobs_amount_string(self,job_lista_str):
         return job_lista_str.count('jobs')
 
     def print_jobs_amount(self):
          if os.path.isfile(self.jenkins_data_file):
-            f = open(self.jenkins_data_file,"r")
+            f = open(self.jenkins_data_file,"r",encoding='UTF8')
             job_lista = f.read()
             job_list_dict = json.loads(job_lista)
             i = 0
@@ -23,7 +23,7 @@ class jobs():
          else:
              print("File doesn't exists")
              sys.exit
-    
+
     def get_jobs(self):
         job_lista = self.open_json_file()
         if job_lista != None:
@@ -32,24 +32,24 @@ class jobs():
         else:
             print("File doesn't exists")
             sys.exit
-    
+
     def open_json_file(self):
         if os.path.isfile(self.jenkins_data_file):
-            f = open(self.jenkins_data_file,"r")
+            f = open(self.jenkins_data_file,"r",encoding='UTF8')
             job_lista = f.read()
             f.close()
             return job_lista
         else:
             print("File doesn't exists")
             sys.exit
-    
+
 
     def print_jobs(self, job_lista):
          if job_lista != None:
             job_list_dict = json.loads(job_lista)
             print("Job id: |Job name:   |Build number: ")
             for job in job_list_dict["jobs"]:
-               print("Job ",job.get("job_nr"),":",job.get("job_name")) 
+               print("Job ",job.get("job_nr"),":",job.get("job_name"))
                print("  Build: ",job.get("builds"))
                if job.get("last_build_date") != {}:
                    print("  Build date: ",job.get("last_build_date"))
@@ -58,7 +58,7 @@ class jobs():
          else:
             print("File probably doesn't exists")
             sys.exit
-    
+
     def sortJobsByDateDesc(self,job_lista, iLow, iHigh):
         if iLow >= iHigh or iLow <0 or iHigh <0:
             return
@@ -81,7 +81,7 @@ class jobs():
         self.sortJobsByDateDesc(job_lista, iLow, lowersNumsEndIndex-2)
         self.sortJobsByDateDesc(job_lista, lowersNumsEndIndex, iHigh)
         return job_lista
-    
+
     def sortJobsByBuildNrDesc(self,job_lista, iLow, iHigh):
         #jobs_list = self.AllJobs()
         #stop:
@@ -101,7 +101,7 @@ class jobs():
         self.sortJobsByBuildNrDesc(job_lista, iLow, lowersNumsEndIndex-2)
         self.sortJobsByBuildNrDesc(job_lista, lowersNumsEndIndex, iHigh)
         return job_lista
-    
+
     def saveToJsonFile(self, job_lista, filename):
         f = open(filename,"w")
         f.write("{ \n" )
@@ -114,7 +114,7 @@ class jobs():
             rob = str(job)
             rob = rob.replace('\'', '\"')
             if l == 0:
-                f.write("    ")     
+                f.write("    ")
                 f.write(rob)
                 f.write("\n")
             else:
@@ -122,13 +122,13 @@ class jobs():
                 f.write(rob)
                 f.write(",\n")
             f.write("\n")
-        
+
         f.write(" ] \n")
         f.write("\n")
         f.write("}")
         print("Data saved in file: ", filename)
         f.close
-    
+
     def coutSuccessJobs(self,jobs):
         suc = 0
         fail = 0
@@ -138,7 +138,7 @@ class jobs():
             elif job['success_build'] == 'FAILURE':
                 fail +=1
         return suc, fail
-    
+
     def changeStateToUnstableJSonFile(self,job_lista):
         for job in job_lista:
             if job['success_build'] =='SUCCESS':
@@ -146,8 +146,8 @@ class jobs():
             elif job['success_build'] =='FAILURE':
                 job['success_build'] = ' UNSTABLE'
         return job_lista
-    
-jenkins_data_file = jobs("jenkins_data.json")
+
+jenkins_data_file = jobs("./json_file/jenkins_data.json")
 job_lista = jenkins_data_file.open_json_file()
 jobs_amount = jenkins_data_file.print_jobs_amount()
 print("Jobs amount: ",jobs_amount)
@@ -166,8 +166,8 @@ while not (x in ['1','2','3','4','5','6','7','8']):
     x = input('Make the correct choice again:')
     i += 1
     if i >= 5:
-        exit    
-if x == '1' :   
+        exit
+if x == '1' :
     jenkins_data_file.print_jobs(job_lista)
 elif x == '2':
     job_list_dict = json.loads(job_lista).get("jobs")
@@ -183,34 +183,33 @@ elif x == '4':
     job_list_dict = json.loads(job_lista).get("jobs")
     odp = input('Do you want to sort it by date? (y/n): ')
     jobs_sorted = None
-    if odp == "Y" or odp == "y": 
+    if odp == "Y" or odp == "y":
         jobs_sorted = jenkins_data_file.sortJobsByDateDesc(job_list_dict, 0, jobs_amount-1)
     else:
         odp = input('Do you want to sort it by build number? (y/n): ')
-        if odp == "Y" or odp == "y": 
+        if odp == "Y" or odp == "y":
             jobs_sorted = jenkins_data_file.sortJobsByBuildNrDesc(job_list_dict, 0, jobs_amount-1)
-    if jobs_sorted != None:     
+    if jobs_sorted != None:
         jobs = {"jobs":jobs_sorted}
     else:
         jobs = job_list_dict
-    print(jobs) 
+    print(jobs)
 elif x == '5':
     job_list_dict = json.loads(job_lista).get("jobs")
     odp = input('Do you want to sort it by date? (y/n): ')
     jobs = job_list_dict
-    if odp == "Y" or odp == "y": 
+    if odp == "Y" or odp == "y":
         jobs_sorted = jenkins_data_file.sortJobsByDateDesc(job_list_dict, 0, jobs_amount-1)
         jobs = jobs_sorted
     else:
         odp = input('Do you want to sort it by build number? (y/n): ')
-        if odp == "Y" or odp == "y": 
+        if odp == "Y" or odp == "y":
             jobs_sorted = jenkins_data_file.sortJobsByBuildNrDesc(job_list_dict, 0, jobs_amount-1)
             jobs = jobs_sorted
-    filename = "jenkins_data_output.json"
+    filename = "./json_file/jenkins_data_output.json"
     jenkins_data_file.saveToJsonFile(jobs, filename)
 elif x == '6':
     job_list_dict = json.loads(job_lista).get("jobs")
-    print(job_list_dict)
     jobs_success = jenkins_data_file.coutSuccessJobs(job_list_dict)[0]
     jobs_failed = jenkins_data_file.coutSuccessJobs(job_list_dict)[1]
     print("Success jobs: ",jobs_success)
@@ -218,7 +217,7 @@ elif x == '6':
 elif x == '7':
     job_list_dict = json.loads(job_lista).get("jobs")
     jobs = jenkins_data_file.changeStateToUnstableJSonFile(job_list_dict)
-    filename = "jenkins_data_output.json"
+    filename = "./json_file/jenkins_data_output.json"
     jenkins_data_file.saveToJsonFile(jobs, filename)
 elif x == '8':
     print('Program closed')
